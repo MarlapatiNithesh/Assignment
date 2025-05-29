@@ -35,7 +35,7 @@ export default function Home() {
     formData.append('resume', selectedFile);
 
     try {
-      const res = await fetch('http://localhost:3000/api/upload', {
+      const res = await fetch('https://assignment-backend-he4q.onrender.com/api/upload', {
         method: 'POST',
         body: formData,
       });

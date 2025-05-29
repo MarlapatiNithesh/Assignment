@@ -25,7 +25,7 @@ export default function SearchBar({ onSearch }) {
       const params = new URLSearchParams();
       params.append('q', trimmed);
 
-      const res = await fetch(`http://localhost:3000/api/jobs?${params.toString()}`);
+      const res = await fetch(`https://assignment-backend-he4q.onrender.com/api/jobs?${params.toString()}`);
       const contentType = res.headers.get('content-type') || '';
 
       if (!res.ok) {
