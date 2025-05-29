@@ -1,15 +1,15 @@
-const express = require('express');
-const dotenv = require('dotenv');
-const cors = require('cors');
-const fs = require('fs');
-const readline = require('readline');
-const path = require('path');
+const express = require("express");
+const dotenv = require("dotenv");
+const cors = require("cors");
+const fs = require("fs");
+const readline = require("readline");
+const path = require("path");
 
-const connectDB = require('./config/db');
-const Job = require('./Models/Job');
+const connectDB = require("./config/db");
+const Job = require("./Models/Job");
 
-const jobRoutes = require('./routes/jobs');
-const uploadRoutes = require('./routes/upload');
+const jobRoutes = require("./routes/jobs");
+const uploadRoutes = require("./routes/upload");
 
 dotenv.config();
 connectDB();
@@ -19,17 +19,17 @@ app.use(cors());
 app.use(express.json());
 
 // API Routes
-app.use('/api/jobs', jobRoutes);
-app.use('/api/upload', uploadRoutes);
+app.use("/api/jobs", jobRoutes);
+app.use("/api/upload", uploadRoutes);
 
 // Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 
 // Load jobs from JSONL on startup if env variable is set
-if (process.env.LOAD_JOBS_ON_STARTUP === 'true') {
-  const filePath = path.join(__dirname, 'data', 'jobs.jsonl');
-  loadJobsFromJSONL(filePath);
+if (process.env.LOAD_JOBS_ON_STARTUP === "true") {
+  const filePath = path.join(__dirname, "jobs.json");
+  loadJobsFromJSON(filePath);
 }
 
 async function loadJobsFromJSONL(filePath) {
@@ -40,7 +40,7 @@ async function loadJobsFromJSONL(filePath) {
     }
 
     await Job.deleteMany({});
-    console.log('🗑️ Cleared existing jobs in DB');
+    console.log("🗑️ Cleared existing jobs in DB");
 
     const rl = readline.createInterface({
       input: fs.createReadStream(filePath),
@@ -61,12 +61,12 @@ async function loadJobsFromJSONL(filePath) {
 
         await Job.create(job);
       } catch (err) {
-        console.error('❌ Failed to parse/save job:', err.message);
+        console.error("❌ Failed to parse/save job:", err.message);
       }
     }
 
-    console.log('✅ Jobs loaded from JSONL file');
+    console.log("✅ Jobs loaded from JSONL file");
   } catch (error) {
-    console.error('❌ Failed to load jobs from JSONL:', error.message);
+    console.error("❌ Failed to load jobs from JSONL:", error.message);
   }
 }
