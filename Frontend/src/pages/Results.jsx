@@ -6,7 +6,7 @@ export default function Results() {
   const { jobs } = useJobContext();
   const navigate = useNavigate();
 
-  console.log('jobs from context:', jobs); // Debugging
+  console.log('jobs from context:', jobs);
 
   return (
     <main className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
@@ -32,20 +32,18 @@ export default function Results() {
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
             aria-live="polite"
           >
-            {jobs.map((job, index) => {
-              if (!job) return null;
+            {jobs.map((match, index) => {
+              // Defensive check
+              if (!match || !match.job) return null;
 
-              const key =
-                job._id ||
-                job.id ||
-                job.job_id ||
-                job.title ||
-                index;
+              const key = match.job._id || match.job.id || match.job.job_id || match.job.job_title || index;
 
               return (
                 <JobCard
                   key={key}
-                  job={job}
+                  job={match.job}
+                  matchScore={match.matchScore}
+                  matchedSkills={match.matchedSkills}
                 />
               );
             })}
