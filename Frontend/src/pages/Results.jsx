@@ -9,10 +9,26 @@ export default function Results() {
   if (!jobs || jobs.length === 0) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-gray-50">
-        <p className="text-gray-600 text-xl">No job results available. Please upload a resume or search again.</p>
+        <p className="text-gray-600 text-xl">
+          No job results available. Please upload a resume or search again.
+        </p>
       </main>
     );
   }
+
+  // Detect format: if first item has 'job' property, it's format A
+  // else it's format B (direct job objects)
+  const isFormatA = jobs[0] && jobs[0].job !== undefined;
+
+  // Normalize the jobs array to a common shape
+  // Each element: { job, matchScore, matchedSkills }
+  const normalizedJobs = isFormatA
+    ? jobs
+    : jobs.map((jobObj) => ({
+        job: jobObj,
+        matchScore: null,
+        matchedSkills: [],
+      }));
 
   return (
     <main className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
@@ -33,7 +49,7 @@ export default function Results() {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
           aria-live="polite"
         >
-          {jobs.map(({ job, matchScore, matchedSkills }, index) => {
+          {normalizedJobs.map(({ job, matchScore, matchedSkills }, index) => {
             if (!job) return null;
 
             // Use _id or fallback to index for keys

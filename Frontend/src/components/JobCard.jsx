@@ -8,6 +8,7 @@ export default function JobCard({ job, matchScore, matchedSkills }) {
   const isLong = description.length > previewLength;
   const previewText = isLong ? description.slice(0, previewLength) + '...' : description;
 
+  // Support both formats (different keys)
   const title = job.job_title || job.title || 'Untitled Role';
   const company = job.company_name || job.company || 'Unknown Company';
   const location = job.job_location || job.location || 'Unknown Location';
@@ -27,15 +28,11 @@ export default function JobCard({ job, matchScore, matchedSkills }) {
 
       {/* Match Score and Skills */}
       {typeof matchScore === 'number' && (
-        <p className="text-green-600 font-semibold text-sm">
-          Match Score: {matchScore}%
-        </p>
+        <p className="text-green-600 font-semibold text-sm">Match Score: {matchScore}%</p>
       )}
 
       {Array.isArray(matchedSkills) && matchedSkills.length > 0 && (
-        <p className="text-gray-500 text-xs">
-          Matched Skills: {matchedSkills.join(', ')}
-        </p>
+        <p className="text-gray-500 text-xs">Matched Skills: {matchedSkills.join(', ')}</p>
       )}
 
       {/* Description */}
