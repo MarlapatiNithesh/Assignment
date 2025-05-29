@@ -30,14 +30,25 @@ export default function Results() {
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
             aria-live="polite"
           >
-            {jobs.map((match) => (
-              <JobCard
-                key={match.job._id || match.job.id || match.job.job_id || match.job.title}
-                job={match.job}
-                matchScore={match.matchScore}
-                matchedSkills={match.matchedSkills}
-              />
-            ))}
+            {jobs.map((match, index) => {
+              if (!match.job) return null; // skip invalid entries
+
+              const key =
+                match.job._id ||
+                match.job.id ||
+                match.job.job_id ||
+                match.job.title ||
+                index;
+
+              return (
+                <JobCard
+                  key={key}
+                  job={match.job}
+                  matchScore={match.matchScore}
+                  matchedSkills={match.matchedSkills}
+                />
+              );
+            })}
           </section>
         )}
       </div>
