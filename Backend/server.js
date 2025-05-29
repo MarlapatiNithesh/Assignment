@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const fs = require('fs');
 const readline = require('readline');
+const path = require('path');
 
 const connectDB = require('./config/db');
 const Job = require('./Models/Job');
@@ -25,19 +26,24 @@ app.use('/api/upload', uploadRoutes);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
 
-// Load jobs from JSONL on startup if env variable set
+// Load jobs from JSONL on startup if env variable is set
 if (process.env.LOAD_JOBS_ON_STARTUP === 'true') {
-  loadJobsFromJSONL('./data/jobs.jsonl');
+  const filePath = path.join(__dirname, 'data', 'jobs.jsonl');
+  loadJobsFromJSONL(filePath);
 }
 
-async function loadJobsFromJSONL(path) {
+async function loadJobsFromJSONL(filePath) {
   try {
-    // Optional: clear existing jobs before loading new ones
+    if (!fs.existsSync(filePath)) {
+      console.error(`❌ File not found: ${filePath}`);
+      return;
+    }
+
     await Job.deleteMany({});
     console.log('🗑️ Cleared existing jobs in DB');
 
     const rl = readline.createInterface({
-      input: fs.createReadStream(path),
+      input: fs.createReadStream(filePath),
       crlfDelay: Infinity,
     });
 
@@ -47,7 +53,7 @@ async function loadJobsFromJSONL(path) {
       try {
         const job = JSON.parse(line);
 
-        // Map job_description -> description if present
+        // Normalize property
         if (job.job_description) {
           job.description = job.job_description;
           delete job.job_description;
@@ -55,7 +61,7 @@ async function loadJobsFromJSONL(path) {
 
         await Job.create(job);
       } catch (err) {
-        console.error('Failed to parse or save job:', err.message);
+        console.error('❌ Failed to parse/save job:', err.message);
       }
     }
 
