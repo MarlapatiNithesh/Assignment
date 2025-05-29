@@ -6,6 +6,8 @@ export default function Results() {
   const { jobs } = useJobContext();
   const navigate = useNavigate();
 
+  console.log('jobs from context:', jobs); // Debugging
+
   return (
     <main className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
@@ -31,7 +33,7 @@ export default function Results() {
             aria-live="polite"
           >
             {jobs.map((match, index) => {
-              if (!match.job) return null; // skip invalid entries
+              if (!match.job) return null;
 
               const key =
                 match.job._id ||
