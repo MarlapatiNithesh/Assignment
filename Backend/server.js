@@ -20,7 +20,7 @@ app.use('/api/upload', require('./routes/upload'));
 
 const PORT = process.env.PORT || 5000;
 
-// Function to load jobs from JSON file
+// ✅ Function to load jobs from JSONL file
 async function loadJobsFromJSON(filePath) {
   try {
     if (!fs.existsSync(filePath)) {
@@ -31,8 +31,8 @@ async function loadJobsFromJSON(filePath) {
     await Job.deleteMany({});
     console.log('🗑️ Cleared existing jobs in DB');
 
-    const data = fs.readFileSync(filePath, 'utf-8');
-    const jobs = JSON.parse(data);
+    const lines = fs.readFileSync(filePath, 'utf-8').split('\n').filter(Boolean);
+    const jobs = lines.map(line => JSON.parse(line));
 
     for (const job of jobs) {
       if (job.job_description) {
@@ -43,9 +43,9 @@ async function loadJobsFromJSON(filePath) {
       await Job.create(job);
     }
 
-    console.log('✅ Jobs loaded from JSON file');
+    console.log(`✅ Loaded ${jobs.length} jobs from JSONL file`);
   } catch (error) {
-    console.error('❌ Failed to load jobs from JSON:', error.message);
+    console.error('❌ Failed to load jobs from JSONL:', error.message);
   }
 }
 
@@ -58,4 +58,3 @@ app.listen(PORT, () => {
     loadJobsFromJSON(filePath);
   }
 });
-
