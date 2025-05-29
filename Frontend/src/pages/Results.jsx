@@ -32,18 +32,29 @@ export default function Results() {
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
             aria-live="polite"
           >
-            {jobs.map((match, index) => {
-              // Defensive check
-              if (!match || !match.job) return null;
+            {jobs.map((item, index) => {
+              // Determine if item is Format A (with job inside) or Format B (direct job)
+              const isFormatA = item && item.job !== undefined;
 
-              const key = match.job._id || match.job.id || match.job.job_id || match.job.job_title || index;
+              const job = isFormatA ? item.job : item;
+              const matchScore = isFormatA ? item.matchScore : undefined;
+              const matchedSkills = isFormatA ? item.matchedSkills : undefined;
+
+              if (!job) return null;
+
+              const key =
+                job._id ||
+                job.id ||
+                job.job_id ||
+                job.job_title ||
+                index;
 
               return (
                 <JobCard
                   key={key}
-                  job={match.job}
-                  matchScore={match.matchScore}
-                  matchedSkills={match.matchedSkills}
+                  job={job}
+                  matchScore={matchScore}
+                  matchedSkills={matchedSkills}
                 />
               );
             })}
