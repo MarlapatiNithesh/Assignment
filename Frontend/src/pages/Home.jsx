@@ -44,6 +44,7 @@ export default function Home() {
 
       if (res.ok) {
         setSuccessMessage('✅ Resume uploaded successfully!');
+        console.log('✅ Resume uploaded successfully!',data);
         setJobs(data.matchedJobs || []);
         navigate('/results');
       } else {
