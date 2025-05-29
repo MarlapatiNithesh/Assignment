@@ -46,6 +46,7 @@ export default function SearchBar({ onSearch }) {
 
       const jobs = await res.json();
       const jobList = jobs.jobs || [];
+      console.log('job list',jobList)
       setJobs(jobList);
       if (onSearch) onSearch(jobList);
 
