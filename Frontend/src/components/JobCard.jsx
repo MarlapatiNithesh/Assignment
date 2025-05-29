@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function JobCard({ job }) {
+export default function JobCard({ job, matchScore, matchedSkills }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const previewLength = 300;
@@ -25,6 +25,19 @@ export default function JobCard({ job }) {
         <span>{location}</span>
       </p>
 
+      {/* Match Score and Skills */}
+      {typeof matchScore === 'number' && (
+        <p className="text-green-600 font-semibold text-sm">
+          Match Score: {matchScore}%
+        </p>
+      )}
+
+      {Array.isArray(matchedSkills) && matchedSkills.length > 0 && (
+        <p className="text-gray-500 text-xs">
+          Matched Skills: {matchedSkills.join(', ')}
+        </p>
+      )}
+
       {/* Description */}
       <div className="text-gray-700 text-sm whitespace-pre-line">
         {isExpanded ? description : previewText}
@@ -33,6 +46,7 @@ export default function JobCard({ job }) {
             onClick={() => setIsExpanded(!isExpanded)}
             className="ml-2 text-blue-600 font-semibold hover:underline focus:outline-none"
             aria-label={isExpanded ? 'Read less' : 'Read more'}
+            type="button"
           >
             {isExpanded ? 'Read less' : 'Read more'}
           </button>

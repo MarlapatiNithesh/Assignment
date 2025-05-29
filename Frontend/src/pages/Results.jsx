@@ -6,7 +6,13 @@ export default function Results() {
   const { jobs } = useJobContext();
   const navigate = useNavigate();
 
-  console.log('jobs from context:', jobs);
+  if (!jobs || jobs.length === 0) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-gray-50">
+        <p className="text-gray-600 text-xl">No job results available. Please upload a resume or search again.</p>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
@@ -23,43 +29,26 @@ export default function Results() {
           </button>
         </header>
 
-        {(!jobs || jobs.length === 0) ? (
-          <p className="text-center text-gray-600 text-lg mt-20">
-            No job results available. Please upload a resume or search again.
-          </p>
-        ) : (
-          <section
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-            aria-live="polite"
-          >
-            {jobs.map((item, index) => {
-              // Determine if item is Format A (with job inside) or Format B (direct job)
-              const isFormatA = item && item.job !== undefined;
+        <section
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          aria-live="polite"
+        >
+          {jobs.map(({ job, matchScore, matchedSkills }, index) => {
+            if (!job) return null;
 
-              const job = isFormatA ? item.job : item;
-              const matchScore = isFormatA ? item.matchScore : undefined;
-              const matchedSkills = isFormatA ? item.matchedSkills : undefined;
+            // Use _id or fallback to index for keys
+            const key = job._id || job.id || index;
 
-              if (!job) return null;
-
-              const key =
-                job._id ||
-                job.id ||
-                job.job_id ||
-                job.job_title ||
-                index;
-
-              return (
-                <JobCard
-                  key={key}
-                  job={job}
-                  matchScore={matchScore}
-                  matchedSkills={matchedSkills}
-                />
-              );
-            })}
-          </section>
-        )}
+            return (
+              <JobCard
+                key={key}
+                job={job}
+                matchScore={matchScore}
+                matchedSkills={matchedSkills}
+              />
+            );
+          })}
+        </section>
       </div>
     </main>
   );
